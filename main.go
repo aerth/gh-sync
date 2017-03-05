@@ -63,6 +63,10 @@ func main() {
 		}
 	}
 
+  if verbose && numarg != 0 {
+    echo("[column] %s", numarg)
+  }
+
 	if userOrOrganization == "" {
 		userOrOrganization = "user" // or "org"
 	}
@@ -96,11 +100,11 @@ func getwd() string {
 }
 func github(apiHost, apiPath, apiUser, apiToken, clonepath string) {
   wd := getwd()
-	if clonepath == "" {
+	if clonepath == "." || clonepath == "" {
     clonepath = wd
 	} else {
     if !filepath.IsAbs(clonepath) {
-      clonepath = wd
+      clonepath = wd+"/"+clonepath
     }
   }
 	if !strings.HasSuffix(clonepath, "/") {
@@ -110,14 +114,16 @@ func github(apiHost, apiPath, apiUser, apiToken, clonepath string) {
 	path := fmt.Sprintf("https://%s/%s/repos?access_token=%s&per_page=9000", apiHost, apiPath, apiToken)
 	repos := githubFetchList(path)
 	if verbose {
-		echo("Found %v repositories.", len(repos))
-		echo("Starting clone operation")
+		echo("Found %v repositories.\n", len(repos))
+		if !dryrun {echo("Starting clone operation to directory: %q\n", clonepath)}
 	}
 
 	done := make(chan string, len(repos))
 	quit := make(chan int)
 
 	for i, repo := range repos {
+
+    // print
 		switch numarg {
 		case 1:
 			echo("%s\n", repo.Name)
