@@ -114,6 +114,11 @@ func getArgs(args []string) {
       accessToken = strings.TrimPrefix(v, "token=")
       continue
     }
+
+    if strings.HasPrefix(v, "dir="){
+      outputDir = strings.TrimPrefix(v, "dir=")
+      continue
+    }
   }
 }
 var numarg int
