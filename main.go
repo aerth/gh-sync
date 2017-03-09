@@ -99,6 +99,9 @@ func main() {
 			userOrOrganization = "users" // or "org"
 		}
 	}
+	if outputDir == "" {
+		outputDir = accountName
+	}
 	github(githubBaseURL, userOrOrganization, accountName, accessToken, outputDir)
 	os.Exit(0)
 }
