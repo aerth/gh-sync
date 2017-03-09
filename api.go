@@ -198,7 +198,9 @@ func cloner(repo Repository, clonepath string, count int, done chan string) {
 	}
 	b, err := cmd.CombinedOutput()
 	if err != nil {
-		if strings.Contains(string(b), "already exists") {
+		if strings.Contains(string(b), "publickey") {
+			echo(string(b))
+		} else if strings.Contains(string(b), "already exists") {
 			if verbose {
 				echo("%q already exists.\n", repo.Name)
 			}
