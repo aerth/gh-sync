@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
-  "path/filepath"
 )
 
 var (
@@ -63,9 +63,9 @@ func main() {
 		}
 	}
 
-  if verbose && numarg != 0 {
-    echo("[column] %s", numarg)
-  }
+	if verbose && numarg != 0 {
+		echo("[column] %s", numarg)
+	}
 
 	if githubBaseURL == "" {
 		githubBaseURL = "api.github.com"
@@ -86,45 +86,47 @@ func main() {
 		if accessToken != "" {
 			userOrOrganization = "user"
 		} else {
-		userOrOrganization = "users" // or "org"
+			userOrOrganization = "users" // or "org"
 		}
 	}
 	github(githubBaseURL, userOrOrganization, accountName, accessToken, outputDir)
 	os.Exit(0)
 }
 func getwd() string {
-  var err error
-  var wd string
-  wd, err = os.Getwd()
-  if err != nil {
-    echo(err.Error())
-    os.Exit(1)
-  }
-  return wd
+	var err error
+	var wd string
+	wd, err = os.Getwd()
+	if err != nil {
+		echo(err.Error())
+		os.Exit(1)
+	}
+	return wd
 }
 func github(apiHost, apiPath, apiUser, apiToken, clonepath string) {
-  wd := getwd()
+	wd := getwd()
 	if clonepath == "." || clonepath == "" {
-    clonepath = wd
+		clonepath = wd
 	} else {
-    if !filepath.IsAbs(clonepath) {
-      clonepath = wd+"/"+clonepath
-    }
-  }
+		if !filepath.IsAbs(clonepath) {
+			clonepath = wd + "/" + clonepath
+		}
+	}
 	if !strings.HasSuffix(clonepath, "/") {
 		clonepath = clonepath + "/"
 	}
 	var path string
 	if apiToken != "" {
-	path = fmt.Sprintf("https://%s/%s/repos?access_token=%s&per_page=9000", apiHost, apiPath, apiToken)
+		path = fmt.Sprintf("https://%s/%s/repos?access_token=%s&per_page=9000", apiHost, apiPath, apiToken)
 
-	}else {
+	} else {
 		path = fmt.Sprintf("https://%s/users/%s/repos?per_page=9000", apiHost, apiUser)
 	}
 	repos := githubFetchList(path)
 	if verbose {
 		echo("Found %v repositories.\n", len(repos))
-		if !dryrun {echo("Starting clone operation to directory: %q\n", clonepath)}
+		if !dryrun {
+			echo("Starting clone operation to directory: %q\n", clonepath)
+		}
 	}
 
 	done := make(chan string, len(repos))
@@ -132,7 +134,7 @@ func github(apiHost, apiPath, apiUser, apiToken, clonepath string) {
 
 	for i, repo := range repos {
 
-    // print
+		// print
 		switch numarg {
 		case 1:
 			echo("%s\n", repo.Name)

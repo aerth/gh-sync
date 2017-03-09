@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -136,6 +137,10 @@ func getArgs(args []string) {
 	}
 }
 
+var apigun = new(http.Client)
+var transport = new(http.Transport)
+var tlsconfig = new(tls.Config)
+
 func getFlags(flags []string) {
 	if flags != nil {
 		for _, v := range flags {
@@ -149,6 +154,11 @@ func getFlags(flags []string) {
 
 			case "d", "dryrun":
 				dryrun = true
+
+			case "unsafe":
+				tlsconfig.InsecureSkipVerify = true
+				transport.TLSClientConfig = tlsconfig
+				apigun.Transport = transport
 
 			case "v", "verbose":
 				verbose = true
@@ -209,7 +219,7 @@ func cloner(repo Repository, clonepath string, count int, done chan string) {
 
 // fetch and unmarshal
 func githubFetchList(path string) []Repository {
-	res, err := http.Get(path)
+	res, err := apigun.Get(path)
 	if err != nil {
 		echo(err.Error())
 		os.Exit(1)
