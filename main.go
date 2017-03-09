@@ -49,7 +49,7 @@ func main() {
 		echo("Flags: %q\n", flags)
 		echo("Args: %q\n", args)
 	}
-	for _, arg := range args {
+	for i, arg := range args {
 		switch arg {
 		case "1":
 			numarg = 1
@@ -58,8 +58,22 @@ func main() {
 		case "3":
 			numarg = 3
 		default:
-			outputDir = arg
-
+			s := strings.Split(arg, "=")
+			if len(s) > 1 {
+				// s[0] user
+				if s[0] == "user" {
+					accountName = s[1]
+				}
+				// s[0] dir
+				if s[0] == "dir" {
+					outputDir = s[1]
+				}
+				// s[0] token
+			} else {
+				if i == len(args)-1 {
+					outputDir = s[0]
+				}
+			}
 		}
 	}
 
