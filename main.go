@@ -49,7 +49,7 @@ func main() {
 		echo("Flags: %q\n", flags)
 		echo("Args: %q\n", args)
 	}
-	for i, arg := range args {
+	for _, arg := range args {
 		switch arg {
 		case "1":
 			numarg = 1
@@ -69,10 +69,6 @@ func main() {
 					outputDir = s[1]
 				}
 				// s[0] token
-			} else {
-				if i == len(args)-1 {
-					outputDir = s[0]
-				}
 			}
 		}
 	}
