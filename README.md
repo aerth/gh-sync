@@ -2,10 +2,12 @@
 
 ## What it does
 
-  * With your github API key, gather repository information
+  * Download or List all repositories by a user
+  * Gather repository information from github API
   * Extract JSON 'ssh-url' value from each repo
   * Use git program to clone each repository
   * Option '-d' lists repositories without cloning them
+  * No api token required
 
 ## Install gh-sync
 

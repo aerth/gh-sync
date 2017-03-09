@@ -67,9 +67,6 @@ func main() {
     echo("[column] %s", numarg)
   }
 
-	if userOrOrganization == "" {
-		userOrOrganization = "user" // or "org"
-	}
 	if githubBaseURL == "" {
 		githubBaseURL = "api.github.com"
 	}
@@ -81,8 +78,15 @@ func main() {
 	}
 	if accessToken == "" {
 		if accessToken = os.Getenv("GITHUB_TOKEN"); accessToken == "" {
-			echo("gh-sync error: No API token. Visit https://github.com/settings/tokens/new and use token=XXXXXX or set GITHUB_TOKEN environmental variable")
-			os.Exit(1)
+			//echo("gh-sync error: No API token. Visit https://github.com/settings/tokens/new and use token=XXXXXX or set GITHUB_TOKEN environmental variable")
+			//os.Exit(1)
+		}
+	}
+	if userOrOrganization == "" {
+		if accessToken != "" {
+			userOrOrganization = "user"
+		} else {
+		userOrOrganization = "users" // or "org"
 		}
 	}
 	github(githubBaseURL, userOrOrganization, accountName, accessToken, outputDir)
@@ -110,8 +114,13 @@ func github(apiHost, apiPath, apiUser, apiToken, clonepath string) {
 	if !strings.HasSuffix(clonepath, "/") {
 		clonepath = clonepath + "/"
 	}
+	var path string
+	if apiToken != "" {
+	path = fmt.Sprintf("https://%s/%s/repos?access_token=%s&per_page=9000", apiHost, apiPath, apiToken)
 
-	path := fmt.Sprintf("https://%s/%s/repos?access_token=%s&per_page=9000", apiHost, apiPath, apiToken)
+	}else {
+		path = fmt.Sprintf("https://%s/users/%s/repos?per_page=9000", apiHost, apiUser)
+	}
 	repos := githubFetchList(path)
 	if verbose {
 		echo("Found %v repositories.\n", len(repos))
